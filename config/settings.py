@@ -1,6 +1,8 @@
+
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 
 
 # ============================================================
@@ -9,7 +11,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load variables from .env
+# Load environment variables from .env (local development)
 load_dotenv(BASE_DIR / ".env")
 
 
@@ -24,9 +26,12 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # SECURITY
 # ============================================================
 
-SECRET_KEY = "django-insecure-campuslance-development-key-change-this"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-campuslance-local-development-key"
+)
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 
 # ============================================================
@@ -34,22 +39,26 @@ DEBUG = True
 # ============================================================
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "10.108.175.42",
+    host.strip()
+    for host in os.getenv(
+        "ALLOWED_HOSTS",
+        "127.0.0.1,localhost,10.108.175.42"
+    ).split(",")
+    if host.strip()
 ]
 
 
 # ============================================================
 # CSRF TRUSTED ORIGINS
-# Required when testing Django from your phone
-# over the same Wi-Fi/network.
 # ============================================================
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-    "http://10.108.175.42:8000",
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://127.0.0.1:8000,http://localhost:8000,http://10.108.175.42:8000"
+    ).split(",")
+    if origin.strip()
 ]
 
 
@@ -85,6 +94,9 @@ MIDDLEWARE = [
 
     "django.middleware.security.SecurityMiddleware",
 
+    # WhiteNoise for serving static files on Render
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
 
     "django.middleware.common.CommonMiddleware",
@@ -113,8 +125,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
 
     {
-        "BACKEND":
-            "django.template.backends.django.DjangoTemplates",
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
 
         "DIRS": [
             BASE_DIR / "templates",
@@ -126,22 +137,13 @@ TEMPLATES = [
 
             "context_processors": [
 
-                # Django request
                 "django.template.context_processors.request",
 
-                # Authentication / user
                 "django.contrib.auth.context_processors.auth",
 
-                # Django messages
                 "django.contrib.messages.context_processors.messages",
 
-                # ====================================================
-                # CAMPUSLANCE UNREAD MESSAGE NOTIFICATION
-                # Provides:
-                # {{ unread_message_count }}
-                # to every template.
-                # ====================================================
-
+                # CampusLance unread message notification
                 "messaging.context_processors.unread_messages",
 
             ],
@@ -159,31 +161,45 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # ============================================================
 # DATABASE
-# Use MySQL when the project is configured for it, otherwise
-# fall back to SQLite so local development works without a
-# database server running.
+# PostgreSQL on Render, SQLite locally, or MySQL if configured
 # ============================================================
 
-DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").lower()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DB_ENGINE == "mysql":
+if DATABASE_URL:
+
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": os.getenv("DB_NAME", "campuslance_db"),
-            "USER": os.getenv("DB_USER", "root"),
-            "PASSWORD": os.getenv("DB_PASSWORD", ""),
-            "HOST": os.getenv("DB_HOST", "localhost"),
-            "PORT": os.getenv("DB_PORT", "3306"),
-        }
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+        )
     }
+
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+
+    DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").lower()
+
+    if DB_ENGINE == "mysql":
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": os.getenv("DB_NAME", "campuslance_db"),
+                "USER": os.getenv("DB_USER", "root"),
+                "PASSWORD": os.getenv("DB_PASSWORD", ""),
+                "HOST": os.getenv("DB_HOST", "localhost"),
+                "PORT": os.getenv("DB_PORT", "3306"),
+            }
         }
-    }
+
+    else:
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
 
 
 # ============================================================
@@ -229,13 +245,28 @@ USE_TZ = True
 
 # ============================================================
 # STATIC FILES
+# WhiteNoise configuration for Render
 # ============================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STORAGES = {
+
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+
+}
 
 
 # ============================================================
@@ -277,3 +308,16 @@ LOGOUT_REDIRECT_URL = "/login/"
 # ============================================================
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+# ============================================================
+# PRODUCTION SECURITY
+# ============================================================
+
+if not DEBUG:
+
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
