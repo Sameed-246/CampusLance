@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container applications-page">
+
+    <h1 style="margin-bottom:25px;">
+        📋 My Applications
+    </h1>
+
+    {% if applications %}
+
+        {% for application in applications %}
+
+            <div class="application-list-card" style="
+                background:white;
+                border:1px solid #ddd;
+                border-radius:10px;
+                padding:22px;
+                margin-bottom:20px;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+            ">
+
+                <!-- Job Title -->
+                <h2 style="margin-top:0;">
+                    {{ application.job.title }}
+                </h2>
+
+                <!-- Job Description -->
+                <p>
+                    {{ application.job.description }}
+                </p>
+
+                <!-- Client -->
+                {% if application.job.client %}
+                    <p>
+                        <strong>Posted by:</strong>
+                        {{ application.job.client.username }}
+                    </p>
+                {% endif %}
+
+                <!-- Budget -->
+                {% if application.job.budget %}
+                    <p>
+                        <strong>Budget:</strong>
+                        ₹{{ application.job.budget }}
+                    </p>
+                {% endif %}
+
+                <!-- Applied Date -->
+                <p>
+                    <strong>Applied on:</strong>
+                    {{ application.applied_at|date:"M d, Y H:i" }}
+                </p>
+
+                <hr style="
+                    border:0;
+                    border-top:1px solid #ddd;
+                    margin:18px 0;
+                ">
+
+                <!-- Status -->
+                <p>
+                    <strong>Status:</strong>
+
+                    {% if application.status == "Accepted" %}
+
+                        <span style="
+                            background:#198754;
+                            color:white;
+                            padding:6px 12px;
+                            border-radius:6px;
+                            font-weight:bold;
+                        ">
+                            ✅ Accepted
+                        </span>
+
+                    {% elif application.status == "Rejected" %}
+
+                        <span style="
+                            background:#dc3545;
+                            color:white;
+                            padding:6px 12px;
+                            border-radius:6px;
+                            font-weight:bold;
+                        ">
+                            ❌ Rejected
+                        </span>
+
+                    {% else %}
+
+                        <span style="
+                            background:#ffc107;
+                            color:#212529;
+                            padding:6px 12px;
+                            border-radius:6px;
+                            font-weight:bold;
+                        ">
+                            ⏳ Pending
+                        </span>
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="applications-empty-state" style="
+            background:white;
+            padding:40px;
+            text-align:center;
+            border-radius:10px;
+            border:1px solid #ddd;
+        ">
+
+            <h2>No Applications Yet</h2>
+
+            <p>
+                You haven't applied for any jobs yet.
+            </p>
+
+            <a
+                href="{% url 'job_list' %}"
+                style="
+                    display:inline-block;
+                    margin-top:15px;
+                    background:#0d6efd;
+                    color:white;
+                    padding:10px 18px;
+                    border-radius:6px;
+                    text-decoration:none;
+                "
+            >
+                🔎 Browse Jobs
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

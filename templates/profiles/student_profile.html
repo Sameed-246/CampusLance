@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:850px;
+    margin:40px auto;
+">
+
+    <!-- Profile Header -->
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:12px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:25px;
+        text-align:center;
+    ">
+
+        <h1>👤 {{ student.username }}</h1>
+
+        {% if profile.location %}
+            <p>📍 {{ profile.location }}</p>
+        {% endif %}
+
+        {% if profile.bio %}
+            <p style="
+                max-width:650px;
+                margin:20px auto;
+                color:#555;
+            ">
+                {{ profile.bio }}
+            </p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Education -->
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:20px;
+    ">
+
+        <h2>🎓 Education</h2>
+
+        {% if profile.college %}
+            <p>
+                <strong>College:</strong>
+                {{ profile.college }}
+            </p>
+        {% else %}
+            <p>No college information provided.</p>
+        {% endif %}
+
+        {% if profile.degree %}
+            <p>
+                <strong>Degree:</strong>
+                {{ profile.degree }}
+            </p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Skills -->
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:20px;
+    ">
+
+        <h2>💻 Skills</h2>
+
+        {% if profile.skills %}
+            <p>{{ profile.skills }}</p>
+        {% else %}
+            <p>No skills provided.</p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Links -->
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:20px;
+    ">
+
+        <h2>🔗 Professional Links</h2>
+
+        {% if profile.github %}
+            <p>
+                <strong>GitHub:</strong>
+                <a href="{{ profile.github }}" target="_blank">
+                    View GitHub
+                </a>
+            </p>
+        {% endif %}
+
+        {% if profile.linkedin %}
+            <p>
+                <strong>LinkedIn:</strong>
+                <a href="{{ profile.linkedin }}" target="_blank">
+                    View LinkedIn
+                </a>
+            </p>
+        {% endif %}
+
+        {% if profile.portfolio %}
+            <p>
+                <strong>Portfolio:</strong>
+                <a href="{{ profile.portfolio }}" target="_blank">
+                    View Portfolio
+                </a>
+            </p>
+        {% endif %}
+
+        {% if not profile.github and not profile.linkedin and not profile.portfolio %}
+            <p>No professional links provided.</p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Resume -->
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:25px;
+    ">
+
+        <h2>📄 Resume</h2>
+
+        {% if profile.resume %}
+            <a
+                href="{{ profile.resume.url }}"
+                target="_blank"
+                style="
+                    display:inline-block;
+                    padding:12px 20px;
+                    background:#0d6efd;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:6px;
+                "
+            >
+                📄 View Resume
+            </a>
+        {% else %}
+            <p>No resume uploaded.</p>
+        {% endif %}
+
+    </div>
+
+
+    <div style="text-align:center;">
+
+        <a
+            href="javascript:history.back()"
+            style="
+                display:inline-block;
+                padding:10px 20px;
+                background:#6c757d;
+                color:white;
+                text-decoration:none;
+                border-radius:6px;
+            "
+        >
+            ← Back
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

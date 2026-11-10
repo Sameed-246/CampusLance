@@ -1,0 +1,736 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>CampusLance | Student Freelance Marketplace</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar navbar-expand-lg campus-navbar">
+
+    <div class="container">
+
+        <a class="navbar-brand campus-logo" href="/">
+            CampusLance <span>🚀</span>
+        </a>
+
+        <div class="navbar-actions">
+
+            {% if user.is_authenticated %}
+
+                <span class="welcome-text">
+                    Welcome, {{ user.username }}
+                </span>
+
+                {% if user.role == "client" %}
+
+                    <a
+                        href="{% url 'client_dashboard' %}"
+                        class="nav-btn dashboard-btn"
+                    >
+                        Dashboard
+                    </a>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'student_dashboard' %}"
+                        class="nav-btn dashboard-btn"
+                    >
+                        Dashboard
+                    </a>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="nav-btn profile-btn"
+                >
+                    Profile
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="nav-btn logout-btn"
+                >
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'login' %}"
+                    class="nav-btn login-btn"
+                >
+                    Login
+                </a>
+
+                <a
+                    href="{% url 'register' %}"
+                    class="nav-btn register-btn"
+                >
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     HERO SECTION
+========================================================= -->
+
+<section class="campus-hero">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <!-- LEFT SIDE -->
+
+            <div class="col-lg-7">
+
+                <div class="hero-badge">
+                    🎓 Built for College Students
+                </div>
+
+                <h1 class="hero-title">
+
+                    Turn Your Skills Into
+                    <span>Real Opportunities.</span>
+
+                </h1>
+
+                <p class="hero-description">
+
+                    CampusLance connects talented students with
+                    clients looking for affordable, skilled,
+                    and reliable freelance talent.
+
+                </p>
+
+                <div class="hero-buttons">
+
+                    {% if not user.is_authenticated %}
+
+                        <a
+                            href="{% url 'register' %}"
+                            class="hero-primary-btn"
+                        >
+                            Get Started 🚀
+                        </a>
+
+                        <a
+                            href="{% url 'login' %}"
+                            class="hero-secondary-btn"
+                        >
+                            Login
+                        </a>
+
+                    {% else %}
+
+                        {% if user.role == "client" %}
+
+                            <a
+                                href="{% url 'client_dashboard' %}"
+                                class="hero-primary-btn"
+                            >
+                                Go to Dashboard →
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'student_dashboard' %}"
+                                class="hero-primary-btn"
+                            >
+                                Go to Dashboard →
+                            </a>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+                <div class="hero-trust">
+
+                    <div>
+                        <strong>500+</strong>
+                        <small>Students</small>
+                    </div>
+
+                    <div>
+                        <strong>250+</strong>
+                        <small>Clients</small>
+                    </div>
+
+                    <div>
+                        <strong>1000+</strong>
+                        <small>Projects</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+
+            <div class="col-lg-5">
+
+                <div class="hero-card">
+
+                    <div class="floating-icon icon-one">
+                        💻
+                    </div>
+
+                    <div class="floating-icon icon-two">
+                        ⭐
+                    </div>
+
+                    <div class="floating-icon icon-three">
+                        💼
+                    </div>
+
+                    <div class="hero-card-content">
+
+                        <div class="hero-card-icon">
+                            🚀
+                        </div>
+
+                        <h3>
+                            Learn. Work. Grow.
+                        </h3>
+
+                        <p>
+                            Build your portfolio while gaining
+                            real-world freelance experience.
+                        </p>
+
+                        <div class="mini-progress">
+
+                            <div class="progress-label">
+                                <span>Career Growth</span>
+                                <strong>85%</strong>
+                            </div>
+
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     WHY CAMPUSLANCE
+========================================================= -->
+
+<section class="why-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                WHY CAMPUSLANCE?
+            </span>
+
+            <h2>
+                Everything You Need To
+                <span>Grow Your Career</span>
+            </h2>
+
+            <p>
+                A simple platform designed to help students
+                gain experience and help clients find talent.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <!-- STUDENTS -->
+
+            <div class="col-md-4">
+
+                <div class="feature-card-new">
+
+                    <div class="feature-icon">
+                        🎓
+                    </div>
+
+                    <h3>
+                        For Students
+                    </h3>
+
+                    <p>
+                        Discover freelance projects, earn money,
+                        build your portfolio and gain valuable
+                        real-world experience.
+                    </p>
+
+                    <div class="feature-link">
+                        Start freelancing →
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLIENTS -->
+
+            <div class="col-md-4">
+
+                <div class="feature-card-new">
+
+                    <div class="feature-icon">
+                        💼
+                    </div>
+
+                    <h3>
+                        For Clients
+                    </h3>
+
+                    <p>
+                        Find talented college students who can
+                        help bring your projects and ideas to life
+                        at affordable prices.
+                    </p>
+
+                    <div class="feature-link">
+                        Find talent →
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RATINGS -->
+
+            <div class="col-md-4">
+
+                <div class="feature-card-new">
+
+                    <div class="feature-icon">
+                        ⭐
+                    </div>
+
+                    <h3>
+                        Build Your Reputation
+                    </h3>
+
+                    <p>
+                        Complete projects, receive ratings and
+                        reviews, and build a professional reputation
+                        that grows with you.
+                    </p>
+
+                    <div class="feature-link">
+                        Build your profile →
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     HOW IT WORKS
+========================================================= -->
+
+<section class="how-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                SIMPLE PROCESS
+            </span>
+
+            <h2>
+                How <span>CampusLance</span> Works
+            </h2>
+
+        </div>
+
+
+        <div class="row g-4">
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <h3>
+                        Create Your Profile
+                    </h3>
+
+                    <p>
+                        Showcase your skills, education,
+                        experience and portfolio.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <h3>
+                        Find Opportunities
+                    </h3>
+
+                    <p>
+                        Browse freelance jobs that match
+                        your skills and interests.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <h3>
+                        Work & Grow
+                    </h3>
+
+                    <p>
+                        Complete projects, earn money and
+                        build your professional reputation.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     STATS
+========================================================= -->
+
+<section class="stats-new">
+
+    <div class="container">
+
+        <div class="row text-center g-4">
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-box">
+
+                    <div class="stat-number-new">
+                        1000+
+                    </div>
+
+                    <div class="stat-label">
+                        Projects
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-box">
+
+                    <div class="stat-number-new">
+                        500+
+                    </div>
+
+                    <div class="stat-label">
+                        Students
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-box">
+
+                    <div class="stat-number-new">
+                        250+
+                    </div>
+
+                    <div class="stat-label">
+                        Clients
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-md-3">
+
+                <div class="stat-box">
+
+                    <div class="stat-number-new">
+                        99%
+                    </div>
+
+                    <div class="stat-label">
+                        Success
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     PDF RESUME SCANNER FOR CLIENTS
+========================================================= -->
+
+<section class="scanner-section">
+
+    <div class="container">
+
+        <div class="scanner-layout">
+
+            <div class="scanner-copy">
+
+                <span class="section-label">
+                    CLIENT ADVANTAGE
+                </span>
+
+                <h2>
+                    Screen candidates faster with
+                    <span>PDF resume scanning</span>
+                </h2>
+
+                <p>
+                    Upload student resumes and instantly spot skill matches,
+                    relevant experience, and role-fit signals before you hire.
+                </p>
+
+                <ul class="scanner-points">
+                    <li>Extract key skills and project experience from PDF resumes</li>
+                    <li>Compare candidate profile against your job requirements</li>
+                    <li>Save time with a smarter shortlisting workflow</li>
+                </ul>
+
+                <a href="{% url 'register' %}" class="cta-button scanner-button">
+                    Try resume scan
+                </a>
+
+            </div>
+
+            <div class="scanner-card" aria-label="Resume scanner preview">
+
+                <div class="scanner-header">
+                    <span class="scanner-dot scanner-dot-red"></span>
+                    <span class="scanner-dot scanner-dot-yellow"></span>
+                    <span class="scanner-dot scanner-dot-green"></span>
+                </div>
+
+                <div class="scanner-panel">
+
+                    <div class="scanner-file">
+                        <span class="scanner-file-icon">📄</span>
+                        <div>
+                            <strong>Resume.pdf</strong>
+                            <small>Uploaded 2 mins ago</small>
+                        </div>
+                    </div>
+
+                    <div class="scanner-score">
+                        <span>Fit Score</span>
+                        <strong>92%</strong>
+                    </div>
+
+                    <div class="scanner-metrics">
+                        <div>
+                            <label>Skills</label>
+                            <p>Python, UI/UX, React</p>
+                        </div>
+                        <div>
+                            <label>Experience</label>
+                            <p>2 internships + 1 freelance project</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CTA
+========================================================= -->
+
+<section class="cta-section">
+
+    <div class="container">
+
+        <div class="cta-box">
+
+            <h2>
+                Ready to Start Your Journey? 🚀
+            </h2>
+
+            <p>
+                Join CampusLance and turn your skills into
+                real-world opportunities.
+            </p>
+
+            {% if not user.is_authenticated %}
+
+                <a
+                    href="{% url 'register' %}"
+                    class="cta-button"
+                >
+                    Join CampusLance
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="campus-footer">
+
+    <div class="container">
+
+        <div class="footer-content">
+
+            <div>
+
+                <h4>
+                    CampusLance 🚀
+                </h4>
+
+                <p>
+                    India's Student Freelance Marketplace
+                </p>
+
+            </div>
+
+            <div>
+                <p>
+                    Learn • Work • Grow
+                </p>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="footer-bottom">
+
+            © 2026 CampusLance.
+            All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

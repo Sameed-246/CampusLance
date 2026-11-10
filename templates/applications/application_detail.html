@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    .details-container {
+        max-width: 1000px;
+        margin: 40px auto;
+    }
+
+    .details-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+
+    .job-title {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .label {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .accepted {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .rejected {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .proposal-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        white-space: pre-wrap;
+    }
+
+</style>
+
+
+<div class="details-container">
+
+
+    <!-- JOB DETAILS -->
+
+    <div class="details-card">
+
+        <h1 class="job-title">
+            {{ application.job.title }}
+        </h1>
+
+
+        {% if application.job.category %}
+
+            <p>
+
+                <strong>Category:</strong>
+
+                {{ application.job.category }}
+
+            </p>
+
+        {% endif %}
+
+
+        {% if application.job.description %}
+
+            <hr>
+
+            <h4>
+                Job Description
+            </h4>
+
+            <p>
+                {{ application.job.description }}
+            </p>
+
+        {% endif %}
+
+
+        <div class="row mt-4">
+
+            <div class="col-md-4">
+
+                <p>
+
+                    <span class="label">
+                        💰 Budget:
+                    </span>
+
+                    ₹{{ application.job.budget }}
+
+                </p>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <p>
+
+                    <span class="label">
+                        📅 Deadline:
+                    </span>
+
+                    {{ application.job.deadline }}
+
+                </p>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <p>
+
+                    <span class="label">
+                        👤 Client:
+                    </span>
+
+                    {{ application.job.client.username }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- APPLICATION DETAILS -->
+
+    <div class="details-card">
+
+        <h3>
+            📋 My Application
+        </h3>
+
+
+        <hr>
+
+
+        <p>
+
+            <span class="label">
+                Applied on:
+            </span>
+
+            {{ application.applied_at|date:"M d, Y H:i" }}
+
+        </p>
+
+
+        <p>
+
+            <span class="label">
+                Status:
+            </span>
+
+
+            {% if application.status == "Accepted" %}
+
+                <span class="status accepted">
+                    ✅ Accepted
+                </span>
+
+
+            {% elif application.status == "Rejected" %}
+
+                <span class="status rejected">
+                    ❌ Rejected
+                </span>
+
+
+            {% else %}
+
+                <span class="status pending">
+                    ⏳ Pending
+                </span>
+
+            {% endif %}
+
+        </p>
+
+
+        <hr>
+
+
+        <h4>
+            📝 My Proposal
+        </h4>
+
+
+        <div class="proposal-box">
+
+            {{ application.proposal }}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- BACK BUTTON -->
+
+    <a
+        href="{% url 'student_dashboard' %}"
+        class="btn btn-secondary"
+    >
+        ← Back to Dashboard
+    </a>
+
+
+</div>
+
+{% endblock %}

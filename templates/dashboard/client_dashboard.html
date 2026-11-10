@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-page client-dashboard" style="max-width:1100px;margin:auto;">
+
+    <h1>💼 Client Dashboard</h1>
+
+    <h2>Welcome, {{ request.user.username }}! 👋</h2>
+
+    <p>
+        Manage your jobs and review student applications.
+    </p>
+
+    <hr>
+
+    <!-- Statistics -->
+
+    <div class="dashboard-stats" style="
+        display:flex;
+        gap:20px;
+        flex-wrap:wrap;
+        margin:30px 0;
+    ">
+
+        <div class="dashboard-stat-card" style="
+            flex:1;
+            min-width:200px;
+            padding:25px;
+            background:#e8f1ff;
+            border-radius:10px;
+            text-align:center;
+        ">
+            <h2>💼 {{ total_jobs }}</h2>
+            <p>Jobs Posted</p>
+        </div>
+
+        <div class="dashboard-stat-card dashboard-stat-amber" style="
+            flex:1;
+            min-width:200px;
+            padding:25px;
+            background:#fff3cd;
+            border-radius:10px;
+            text-align:center;
+        ">
+            <h2>📋 {{ total_applications }}</h2>
+            <p>Total Applications</p>
+        </div>
+
+        <div class="dashboard-stat-card dashboard-stat-success" style="
+            flex:1;
+            min-width:200px;
+            padding:25px;
+            background:#d1e7dd;
+            border-radius:10px;
+            text-align:center;
+        ">
+            <h2>⏳ {{ pending_applications }}</h2>
+            <p>Pending Applications</p>
+        </div>
+
+        <div class="dashboard-stat-card dashboard-stat-success" style="
+            flex:1;
+            min-width:200px;
+            padding:25px;
+            background:#d1e7dd;
+            border-radius:10px;
+            text-align:center;
+        ">
+            <h2>✅ {{ accepted_applications }}</h2>
+            <p>Accepted Applications</p>
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+
+    <h2>Quick Actions</h2>
+
+    <div class="dashboard-actions" style="margin:20px 0;">
+
+        <a href="/jobs/" style="
+            display:inline-block;
+            padding:12px 20px;
+            background:#0d6efd;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+        ">
+            💼 Manage Jobs
+        </a>
+
+    </div>
+
+    <hr>
+
+    <!-- Posted Jobs -->
+
+    <h2>💼 My Posted Jobs</h2>
+
+    {% if jobs %}
+
+        {% for job in jobs %}
+
+        <div class="dashboard-content-card" style="
+            background:white;
+            padding:20px;
+            margin:15px 0;
+            border-radius:10px;
+            box-shadow:0 2px 8px #ddd;
+        ">
+
+            <h3>{{ job.title }}</h3>
+
+            <p>
+                <strong>Category:</strong>
+                {{ job.category }}
+            </p>
+
+            <p>
+                <strong>Budget:</strong>
+                ₹{{ job.budget }}
+            </p>
+
+            <p>
+                <strong>Deadline:</strong>
+                {{ job.deadline }}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>You haven't posted any jobs yet.</p>
+
+    {% endif %}
+
+    <hr>
+
+    <!-- Resume Scanner -->
+
+    <h2>📄 Resume Scanner</h2>
+
+    <div class="dashboard-scanner-card" style="
+        background:linear-gradient(135deg, #eef6ff, #f5f3ff);
+        padding:22px;
+        margin:20px 0;
+        border-radius:12px;
+        border:1px solid #dbeafe;
+    "> 
+        <p style="margin:0 0 10px; color:#1e3a8a; font-weight:700;">
+            Smart screening for candidate resumes
+        </p>
+
+        <p style="margin:0 0 18px; color:#475569;">
+            Upload a PDF resume and quickly compare candidate skills,
+            projects, and experience against your job requirements.
+        </p>
+
+        <button type="button" style="
+            background:#2563eb;
+            color:white;
+            border:none;
+            border-radius:8px;
+            padding:10px 16px;
+            font-weight:700;
+            cursor:pointer;
+        ">
+            Scan PDF Resume
+        </button>
+    </div>
+
+    <hr>
+
+    <!-- Applications -->
+
+    <h2>📋 Student Applications</h2>
+
+    {% if applications %}
+
+        {% for application in applications %}
+
+        <div class="dashboard-content-card" style="
+            background:white;
+            padding:20px;
+            margin:15px 0;
+            border-radius:10px;
+            box-shadow:0 2px 8px #ddd;
+        ">
+
+            <h3>
+                {{ application.job.title }}
+            </h3>
+
+            <p>
+                <strong>Student:</strong>
+                {{ application.student.username }}
+            </p>
+
+            <p>
+                <strong>Applied On:</strong>
+                {{ application.applied_at|date:"M d, Y" }}
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+
+                {% if application.status == "Accepted" %}
+
+                    <span style="color:green;">
+                        ✅ Accepted
+                    </span>
+
+                {% elif application.status == "Rejected" %}
+
+                    <span style="color:red;">
+                        ❌ Rejected
+                    </span>
+
+                {% else %}
+
+                    <span style="color:#d39e00;">
+                        ⏳ Pending
+                    </span>
+
+                {% endif %}
+
+            </p>
+
+            <p>
+                <strong>Proposal:</strong>
+            </p>
+
+            <p>
+                {{ application.proposal }}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            No students have applied to your jobs yet.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

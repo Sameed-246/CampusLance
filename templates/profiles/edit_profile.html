@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile | CampusLance</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #0d6efd;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .page-title {
+            font-weight: 700;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="container">
+
+        <a
+            class="navbar-brand"
+            href="/"
+        >
+            CampusLance
+        </a>
+
+
+        <div>
+
+            <a
+                href="{% url 'profile' %}"
+                class="nav-link d-inline-block"
+            >
+
+                Profile
+
+            </a>
+
+            <a
+                href="/jobs/"
+                class="nav-link d-inline-block"
+            >
+
+                Jobs
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- MAIN -->
+
+<div class="container mt-5 mb-5">
+
+    <div class="form-card">
+
+        <h2 class="page-title mb-2">
+
+            Edit Profile
+
+        </h2>
+
+        <p class="text-muted mb-4">
+
+            Update your CampusLance profile information.
+
+        </p>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- College -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    College
+
+                </label>
+
+                {{ form.college }}
+
+                {% if form.college.errors %}
+
+                    <div class="text-danger">
+
+                        {{ form.college.errors }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Degree -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Degree
+
+                </label>
+
+                {{ form.degree }}
+
+            </div>
+
+
+            <!-- Skills -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Skills
+
+                </label>
+
+                {{ form.skills }}
+
+                <small class="text-muted">
+
+                    Example: Python, Django, HTML, CSS, SQL
+
+                </small>
+
+            </div>
+
+
+            <!-- Bio -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    About You
+
+                </label>
+
+                {{ form.bio }}
+
+            </div>
+
+
+            <!-- Location -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Location
+
+                </label>
+
+                {{ form.location }}
+
+            </div>
+
+
+            <!-- GitHub -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    GitHub
+
+                </label>
+
+                {{ form.github }}
+
+            </div>
+
+
+            <!-- LinkedIn -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    LinkedIn
+
+                </label>
+
+                {{ form.linkedin }}
+
+            </div>
+
+
+            <!-- Portfolio -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Portfolio
+
+                </label>
+
+                {{ form.portfolio }}
+
+            </div>
+
+
+            <!-- Resume -->
+
+            {% if form.resume %}
+
+    <!-- Resume -->
+
+    <div class="mb-4">
+
+        <label class="form-label">
+
+            Resume
+
+        </label>
+
+        {{ form.resume }}
+
+        {% if form.resume.errors %}
+
+            <div class="text-danger mt-1">
+
+                {{ form.resume.errors }}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+
+            <!-- Buttons -->
+
+            <div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+
+                    💾 Save Profile
+
+                </button>
+
+
+                <a
+                    href="{% url 'profile' %}"
+                    class="btn btn-secondary ms-2"
+                >
+
+                    Cancel
+
+                </a>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container jobs-page">
+
+    <!-- Page Header -->
+    <div class="jobs-page-header" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:25px;
+        gap:15px;
+        flex-wrap:wrap;
+    ">
+
+        <h1 style="margin:0;">
+            💼 Available Jobs
+        </h1>
+
+        {% if user.is_authenticated and user.role == "client" %}
+
+            <a
+                href="{% url 'post_job' %}"
+                style="
+                    background:#0d6efd;
+                    color:white;
+                    padding:10px 18px;
+                    border-radius:6px;
+                    text-decoration:none;
+                "
+            >
+                ➕ Post Job
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- SEARCH AND FILTER -->
+    <div class="jobs-filter-card" style="
+        background:white;
+        padding:20px;
+        border-radius:10px;
+        box-shadow:0 2px 8px #ddd;
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            🔎 Find a Job
+        </h3>
+
+        <form method="GET">
+
+            <div class="jobs-filter-row" style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                align-items:center;
+            ">
+
+                <!-- Search -->
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search jobs, skills, or category..."
+                    style="
+                        flex:1;
+                        min-width:220px;
+                        padding:11px;
+                        border:1px solid #ccc;
+                        border-radius:6px;
+                        box-sizing:border-box;
+                    "
+                >
+
+
+                <!-- Category -->
+                <select
+                    name="category"
+                    style="
+                        padding:11px;
+                        border:1px solid #ccc;
+                        border-radius:6px;
+                        min-width:180px;
+                    "
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    {% for value, label in categories %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if selected_category == value %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <!-- Sort -->
+                <select
+                    name="sort"
+                    style="
+                        padding:11px;
+                        border:1px solid #ccc;
+                        border-radius:6px;
+                        min-width:160px;
+                    "
+                >
+
+                    <option
+                        value="newest"
+                        {% if selected_sort == "newest" %}
+                            selected
+                        {% endif %}
+                    >
+                        Newest
+                    </option>
+
+                    <option
+                        value="oldest"
+                        {% if selected_sort == "oldest" %}
+                            selected
+                        {% endif %}
+                    >
+                        Oldest
+                    </option>
+
+                    <option
+                        value="budget_high"
+                        {% if selected_sort == "budget_high" %}
+                            selected
+                        {% endif %}
+                    >
+                        Highest Budget
+                    </option>
+
+                    <option
+                        value="budget_low"
+                        {% if selected_sort == "budget_low" %}
+                            selected
+                        {% endif %}
+                    >
+                        Lowest Budget
+                    </option>
+
+                </select>
+
+
+                <!-- Search Button -->
+                <button
+                    type="submit"
+                    style="
+                        padding:11px 18px;
+                        background:#0d6efd;
+                        color:white;
+                        border:none;
+                        border-radius:6px;
+                        cursor:pointer;
+                        font-weight:bold;
+                    "
+                >
+                    🔍 Search
+                </button>
+
+
+                <!-- Clear -->
+                <a
+                    href="{% url 'job_list' %}"
+                    style="
+                        padding:11px 18px;
+                        background:#6c757d;
+                        color:white;
+                        text-decoration:none;
+                        border-radius:6px;
+                    "
+                >
+                    ✕ Clear
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- SEARCH RESULT INFO -->
+
+    {% if search or selected_category %}
+
+        <div class="jobs-search-result" style="
+            background:#e9f5ff;
+            padding:12px 15px;
+            border-radius:6px;
+            margin-bottom:20px;
+        ">
+
+            <strong>🔎 Search Results:</strong>
+
+            {{ jobs|length }} job{{ jobs|length|pluralize }} found.
+
+            {% if search %}
+                for "<strong>{{ search }}</strong>"
+            {% endif %}
+
+            {% if selected_category %}
+                in <strong>{{ selected_category }}</strong>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- Django Messages -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="job-list-card" style="
+                padding:12px 15px;
+                margin-bottom:20px;
+                border-radius:6px;
+                background:#f8f9fa;
+                border:1px solid #ddd;
+            ">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- JOBS -->
+
+    {% if jobs %}
+
+        {% for job in jobs %}
+
+            <div class="jobs-empty-state" style="
+                background:white;
+                border:1px solid #ddd;
+                border-radius:8px;
+                padding:20px;
+                margin-bottom:20px;
+                box-shadow:0 2px 6px rgba(0,0,0,0.08);
+            ">
+
+                <!-- Job Title -->
+
+                <h2 style="
+                    margin-top:0;
+                    margin-bottom:8px;
+                ">
+                    {{ job.title }}
+                </h2>
+
+
+                <!-- Description -->
+
+                <p style="
+                    font-size:16px;
+                    margin-bottom:15px;
+                ">
+                    {{ job.description }}
+                </p>
+
+
+                <!-- Category -->
+
+                {% if job.category %}
+
+                    <span style="
+                        display:inline-block;
+                        background:#0d6efd;
+                        color:white;
+                        padding:4px 9px;
+                        border-radius:5px;
+                        font-size:13px;
+                        margin-right:5px;
+                    ">
+                        {{ job.category }}
+                    </span>
+
+                {% endif %}
+
+
+                <!-- Budget -->
+
+                {% if job.budget %}
+
+                    <span style="
+                        display:inline-block;
+                        background:#198754;
+                        color:white;
+                        padding:4px 9px;
+                        border-radius:5px;
+                        font-size:13px;
+                    ">
+                        ₹{{ job.budget }}
+                    </span>
+
+                {% endif %}
+
+
+                <!-- Deadline -->
+
+                {% if job.deadline %}
+
+                    <p style="margin-top:18px;">
+
+                        <strong>Deadline:</strong>
+
+                        {{ job.deadline|date:"M d, Y" }}
+
+                    </p>
+
+                {% endif %}
+
+
+                <!-- Posted By -->
+
+                {% if job.client %}
+
+                    <p>
+
+                        <strong>Posted by:</strong>
+
+                        {{ job.client.username }}
+
+                    </p>
+
+                {% endif %}
+
+
+                <hr style="
+                    border:0;
+                    border-top:1px solid #ddd;
+                    margin:18px 0;
+                ">
+
+
+                <!-- STUDENT ACTION -->
+
+                {% if user.is_authenticated and user.role == "student" %}
+
+                    <a
+                        href="{% url 'apply_job' job.id %}"
+                        style="
+                            display:inline-block;
+                            background:#198754;
+                            color:white;
+                            padding:9px 16px;
+                            border-radius:6px;
+                            text-decoration:none;
+                            font-weight:bold;
+                        "
+                    >
+                        🚀 Apply
+                    </a>
+
+                {% endif %}
+
+
+                <!-- CLIENT ACTION -->
+
+                {% if user.is_authenticated and user.role == "client" %}
+
+                    {% if job.client == user %}
+
+                        <a
+                            href="{% url 'view_applicants' job.id %}"
+                            style="
+                                display:inline-block;
+                                background:#0d6efd;
+                                color:white;
+                                padding:9px 16px;
+                                border-radius:6px;
+                                text-decoration:none;
+                                font-weight:bold;
+                            "
+                        >
+                            👥 View Applicants
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+                <!-- NOT LOGGED IN -->
+
+                {% if not user.is_authenticated %}
+
+                    <a
+                        href="{% url 'login' %}"
+                        style="
+                            display:inline-block;
+                            background:#0d6efd;
+                            color:white;
+                            padding:9px 16px;
+                            border-radius:6px;
+                            text-decoration:none;
+                            font-weight:bold;
+                        "
+                    >
+                        🔐 Login to Apply
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <!-- NO JOBS -->
+
+        <div style="
+            text-align:center;
+            padding:50px;
+            background:#f8f9fa;
+            border-radius:8px;
+        ">
+
+            <h2>😔 No jobs found</h2>
+
+            {% if search or selected_category %}
+
+                <p>
+                    Try changing your search or filter.
+                </p>
+
+                <a
+                    href="{% url 'job_list' %}"
+                    style="
+                        display:inline-block;
+                        margin-top:10px;
+                        padding:10px 18px;
+                        background:#0d6efd;
+                        color:white;
+                        text-decoration:none;
+                        border-radius:6px;
+                    "
+                >
+                    🔄 Show All Jobs
+                </a>
+
+            {% else %}
+
+                <p>
+                    There are currently no jobs posted.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

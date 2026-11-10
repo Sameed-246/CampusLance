@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       AI ASSISTANT PAGE
+    ===================================================== */
+
+    .ai-page {
+        width: 100%;
+        max-width: 850px;
+        margin: 25px auto;
+    }
+
+
+    .ai-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.10);
+        overflow: hidden;
+        width: 100%;
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .ai-header {
+        background: #0d6efd;
+        color: white;
+        padding: 20px 24px;
+    }
+
+
+    .ai-header h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+
+    .ai-header p {
+        margin: 7px 0 0;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       CHAT AREA
+    ===================================================== */
+
+    .chat-area {
+        background: #f8f9fa;
+        padding: 20px;
+        min-height: 420px;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+
+    /* =====================================================
+       CHAT MESSAGE
+    ===================================================== */
+
+    .chat-message {
+        padding: 14px 16px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+
+    /* AI */
+
+    .ai-message {
+        background: white;
+        max-width: 85%;
+        margin-right: auto;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+    }
+
+
+    /* USER */
+
+    .user-message {
+        background: #0d6efd;
+        color: white;
+        max-width: 80%;
+        margin-left: auto;
+    }
+
+
+    .message-name {
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+
+    .message-text {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       INPUT AREA
+    ===================================================== */
+
+    .ai-input-area {
+        background: white;
+        border-top: 1px solid #ddd;
+        padding: 18px;
+    }
+
+
+    .ai-form {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+    }
+
+
+    .ai-input {
+        flex: 1;
+        min-width: 0;
+        padding: 13px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+
+    .ai-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13,110,253,0.10);
+    }
+
+
+    .ai-send-button {
+        padding: 13px 22px;
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+
+    .ai-send-button:hover {
+        background: #0b5ed7;
+    }
+
+
+    /* =====================================================
+       CLEAR CHAT
+    ===================================================== */
+
+    .ai-actions {
+        margin-top: 12px;
+        text-align: right;
+    }
+
+
+    .clear-chat-form {
+        display: inline;
+        margin: 0;
+    }
+
+
+    .clear-chat {
+        background: none;
+        border: none;
+        padding: 0;
+        color: #6c757d;
+        text-decoration: none;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+    }
+
+
+    .clear-chat:hover {
+        color: #dc3545;
+        text-decoration: underline;
+    }
+
+
+    /* =====================================================
+       BACK BUTTON
+    ===================================================== */
+
+    .ai-back {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+
+    .ai-back a {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 7px;
+        font-size: 14px;
+    }
+
+
+    .ai-back a:hover {
+        background: #5c636a;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 700px) {
+
+        .ai-page {
+            margin: 10px auto;
+            width: 100%;
+        }
+
+
+        .ai-card {
+            border-radius: 10px;
+        }
+
+
+        .ai-header {
+            padding: 17px;
+        }
+
+
+        .ai-header h2 {
+            font-size: 20px;
+        }
+
+
+        .ai-header p {
+            font-size: 13px;
+        }
+
+
+        .chat-area {
+            padding: 14px;
+            min-height: 400px;
+            max-height: none;
+            height: 55vh;
+        }
+
+
+        .chat-message {
+            padding: 12px 13px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        .ai-message {
+            max-width: 92%;
+        }
+
+
+        .user-message {
+            max-width: 90%;
+        }
+
+
+        .ai-input-area {
+            padding: 12px;
+        }
+
+
+        .ai-form {
+            gap: 7px;
+        }
+
+
+        .ai-input {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+
+        .ai-send-button {
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+
+
+        .ai-actions {
+            margin-top: 14px;
+        }
+
+    }
+
+
+
+    /* =====================================================
+       VERY SMALL PHONES
+    ===================================================== */
+
+    @media (max-width: 400px) {
+
+        .ai-header h2 {
+            font-size: 18px;
+        }
+
+
+        .chat-area {
+            height: 58vh;
+            padding: 10px;
+        }
+
+
+        .chat-message {
+            font-size: 13px;
+        }
+
+
+        .ai-message,
+        .user-message {
+            max-width: 95%;
+        }
+
+
+        .ai-form {
+            flex-direction: row;
+        }
+
+
+        .ai-input {
+            min-width: 0;
+        }
+
+
+        .ai-send-button {
+            padding: 12px;
+            font-size: 0;
+        }
+
+
+        .ai-send-button::after {
+            content: "➤";
+            font-size: 18px;
+        }
+
+    }
+
+</style>
+
+
+<div class="ai-page">
+
+    <div class="ai-card">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================= -->
+
+        <div class="ai-header">
+
+            <h2>
+                🤖 CampusLance AI Assistant
+            </h2>
+
+            <p>
+                Your AI career assistant
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             CHAT
+        ================================================= -->
+
+        <div
+            class="chat-area"
+            id="chatArea"
+        >
+
+
+            <!-- Welcome Message -->
+
+            <div class="chat-message ai-message">
+
+                <div class="message-name">
+                    🤖 AI Assistant
+                </div>
+
+                <p class="message-text">
+                    Hi! 👋 I'm your CampusLance AI Assistant.
+
+                    Ask me about jobs, skills, resumes,
+                    proposals, interviews or career development.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 STORED CHAT HISTORY
+            ================================================= -->
+
+            {% for message in chat_history %}
+
+
+                {% if message.role == "user" %}
+
+                    <!-- USER MESSAGE -->
+
+                    <div class="chat-message user-message">
+
+                        <div class="message-name">
+                            👤 You
+                        </div>
+
+                        <p class="message-text">
+                            {{ message.text }}
+                        </p>
+
+                    </div>
+
+
+                {% elif message.role == "model" %}
+
+                    <!-- AI MESSAGE -->
+
+                    <div class="chat-message ai-message">
+
+                        <div class="message-name">
+                            🤖 AI Assistant
+                        </div>
+
+                        <p class="message-text">
+                            {{ message.text }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+        <!-- =================================================
+             INPUT
+        ================================================= -->
+
+        <div class="ai-input-area">
+
+
+            <!-- SEND MESSAGE FORM -->
+
+            <form
+                method="POST"
+                class="ai-form"
+            >
+
+                {% csrf_token %}
+
+
+                <input
+                    type="text"
+                    name="message"
+                    class="ai-input"
+                    placeholder="Ask your AI assistant..."
+                    autocomplete="off"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="ai-send-button"
+                >
+                    Send
+                </button>
+
+
+            </form>
+
+
+            <!-- =================================================
+                 CLEAR CHAT
+            ================================================= -->
+
+            <div class="ai-actions">
+
+                <form
+                    method="POST"
+                    class="clear-chat-form"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        name="clear_chat"
+                        value="1"
+                        class="clear-chat"
+                    >
+                        🗑️ Clear Chat
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         BACK TO DASHBOARD
+    ===================================================== -->
+
+    <div class="ai-back">
+
+        <a href="{% url 'dashboard' %}">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     AUTO-SCROLL CHAT TO BOTTOM
+========================================================= -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const chatArea = document.getElementById("chatArea");
+
+        if (chatArea) {
+
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+        }
+
+    });
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="applicants-page" style="
+    max-width:1000px;
+    margin:40px auto;
+">
+
+    <!-- HEADER -->
+
+    <div class="applicants-header" style="
+        background:white;
+        padding:25px;
+        border-radius:10px;
+        box-shadow:0 2px 10px #ddd;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin-top:0;">
+            👥 Applicants
+        </h2>
+
+        <h3 style="margin-bottom:5px;">
+            {{ job.title }}
+        </h3>
+
+        <p style="color:#666;">
+            Review students who applied for this job.
+        </p>
+
+        <a
+            href="{% url 'client_dashboard' %}"
+            style="
+                display:inline-block;
+                padding:10px 16px;
+                background:#6c757d;
+                color:white;
+                text-decoration:none;
+                border-radius:6px;
+            "
+        >
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    {% if applications %}
+
+        {% for application in applications %}
+
+            <div class="applicant-card" style="
+                background:white;
+                padding:25px;
+                border-radius:10px;
+                box-shadow:0 2px 10px #ddd;
+                margin-bottom:20px;
+            ">
+
+                <!-- STUDENT INFORMATION -->
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:20px;
+                    flex-wrap:wrap;
+                ">
+
+                    <div>
+
+                        <h3 style="margin:0 0 8px 0;">
+                            👨‍🎓 {{ application.student.username }}
+                        </h3>
+
+                        <p style="
+                            margin:5px 0;
+                            color:#666;
+                        ">
+                            Applied:
+                            {{ application.applied_at|date:"M d, Y H:i" }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div>
+
+                        {% if application.status == "Accepted" %}
+
+                            <span style="
+                                background:#198754;
+                                color:white;
+                                padding:7px 14px;
+                                border-radius:20px;
+                                font-weight:bold;
+                            ">
+                                ✓ Accepted
+                            </span>
+
+                        {% elif application.status == "Rejected" %}
+
+                            <span style="
+                                background:#dc3545;
+                                color:white;
+                                padding:7px 14px;
+                                border-radius:20px;
+                                font-weight:bold;
+                            ">
+                                ✕ Rejected
+                            </span>
+
+                        {% else %}
+
+                            <span style="
+                                background:#ffc107;
+                                color:#212529;
+                                padding:7px 14px;
+                                border-radius:20px;
+                                font-weight:bold;
+                            ">
+                                ⏳ Pending
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROPOSAL -->
+
+                <div style="
+                    margin-top:20px;
+                    padding:18px;
+                    background:#f8f9fa;
+                    border-radius:8px;
+                ">
+
+                    <h4 style="margin-top:0;">
+                        📝 Proposal
+                    </h4>
+
+                    <p style="
+                        line-height:1.6;
+                        white-space:pre-wrap;
+                    ">
+                        {{ application.proposal }}
+                    </p>
+
+                </div>
+
+                <!-- RESUME SCANNER -->
+
+                <div style="
+                    margin-top:18px;
+                    padding:18px;
+                    background:#f0f6ff;
+                    border:1px solid #dbeafe;
+                    border-radius:8px;
+                ">
+
+                    <h4 style="margin-top:0;">
+                        📄 PDF Resume Scanner
+                    </h4>
+
+                    <p style="color:#475569;">
+                        Check resume skills against this job. The scan is
+                        performed locally and uses keyword matching, not an
+                        automated hiring decision.
+                    </p>
+
+                    {% if application.student_profile.resume %}
+
+                        <p style="color:#475569;">
+                            Profile resume:
+                            {{ application.student_profile.resume.name|cut:"resumes/" }}
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'scan_applicant_resume' application.id %}"
+                        >
+                            {% csrf_token %}
+                            <button type="submit" style="
+                                padding:10px 16px;
+                                background:#2563eb;
+                                color:white;
+                                border:0;
+                                border-radius:6px;
+                                cursor:pointer;
+                                font-weight:700;
+                            ">
+                                Scan PDF resume for this job
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <p style="margin:0;color:#64748b;">
+                            No resume has been uploaded to this student's profile yet.
+                        </p>
+
+                    {% endif %}
+
+                    {% if scanned_application_id == application.id %}
+
+                        {% if scan_error %}
+                            <div role="alert" style="
+                                margin-top:15px;
+                                padding:12px;
+                                background:#fff1f2;
+                                color:#9f1239;
+                                border-radius:6px;
+                            ">
+                                {{ scan_error }}
+                            </div>
+                        {% endif %}
+
+                        {% if scan_result %}
+                            <div style="
+                                margin-top:15px;
+                                padding:16px;
+                                background:white;
+                                border-radius:8px;
+                            ">
+                                <h5 style="margin-top:0;">Scan summary</h5>
+                                <p>{{ scan_result.summary }}</p>
+
+                                {% if scan_result.fit_score != None %}
+                                    <p>
+                                        <strong>Keyword match:</strong>
+                                        {{ scan_result.fit_score }}%
+                                    </p>
+                                {% endif %}
+
+                                <p>
+                                    <strong>Matched skills:</strong>
+                                    {% if scan_result.matched_skills %}
+                                        {{ scan_result.matched_skills|join:", " }}
+                                    {% else %}
+                                        No listed job skills matched.
+                                    {% endif %}
+                                </p>
+
+                                {% if scan_result.missing_skills %}
+                                    <p style="margin-bottom:0;">
+                                        <strong>Skills not found:</strong>
+                                        {{ scan_result.missing_skills|join:", " }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div style="
+                    margin-top:20px;
+                    display:flex;
+                    gap:10px;
+                    flex-wrap:wrap;
+                ">
+
+                    <!-- PROFILE -->
+
+                    <a
+                        href="{% url 'student_profile' application.student.id %}"
+                        style="
+                            padding:10px 16px;
+                            background:#0d6efd;
+                            color:white;
+                            text-decoration:none;
+                            border-radius:6px;
+                        "
+                    >
+                        👤 View Profile
+                    </a>
+
+
+                    <!-- MESSAGE ACCEPTED STUDENT -->
+
+                    {% if application.status == "Accepted" %}
+
+                        <a
+                            href="{% url 'conversation' application.student.id %}"
+                            style="
+                                padding:10px 16px;
+                                background:#6f42c1;
+                                color:white;
+                                text-decoration:none;
+                                border-radius:6px;
+                                font-weight:bold;
+                            "
+                        >
+                            💬 Message Student
+                        </a>
+
+                    {% endif %}
+
+
+                    <!-- ACCEPT / REJECT -->
+
+                    {% if application.status == "Pending" %}
+
+                        <a
+                            href="{% url 'accept_application' application.id %}"
+                            style="
+                                padding:10px 16px;
+                                background:#198754;
+                                color:white;
+                                text-decoration:none;
+                                border-radius:6px;
+                            "
+                        >
+                            ✓ Accept
+                        </a>
+
+
+                        <a
+                            href="{% url 'reject_application' application.id %}"
+                            style="
+                                padding:10px 16px;
+                                background:#dc3545;
+                                color:white;
+                                text-decoration:none;
+                                border-radius:6px;
+                            "
+                        >
+                            ✕ Reject
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <!-- NO APPLICANTS -->
+
+        <div style="
+            background:white;
+            padding:50px;
+            text-align:center;
+            border-radius:10px;
+            box-shadow:0 2px 10px #ddd;
+        ">
+
+            <h2>
+                📭 No Applicants Yet
+            </h2>
+
+            <p style="color:#666;">
+                Nobody has applied for this job yet.
+            </p>
+
+            <a
+                href="{% url 'client_dashboard' %}"
+                style="
+                    display:inline-block;
+                    margin-top:15px;
+                    padding:10px 18px;
+                    background:#0d6efd;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:6px;
+                "
+            >
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CampusLance</title>
+
+    {% load static %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+
+    <style>
+
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+
+        body {
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: var(--cl-background);
+            color: var(--cl-navy);
+        }
+
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+
+        input,
+        textarea,
+        select,
+        button {
+            max-width: 100%;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            width: 100%;
+            background: #0d6efd;
+
+            padding: 13px 30px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 20px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .navbar-brand {
+            color: white;
+            font-size: 23px;
+            font-weight: bold;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+            flex-shrink: 0;
+        }
+
+
+        .navbar-brand:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           NAVIGATION LINKS
+        ===================================================== */
+
+        .navbar-links {
+            flex: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 5px 15px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .navbar-links a {
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 500;
+
+            padding: 7px 4px;
+
+            white-space: nowrap;
+        }
+
+
+        .navbar-links a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           IMPORTANT LINKS
+        ===================================================== */
+
+        .ai-link,
+        .messages-link {
+            font-weight: bold !important;
+        }
+
+
+        /* =====================================================
+           MESSAGE LINK + RED NOTIFICATION DOT
+        ===================================================== */
+
+        .messages-link {
+            position: relative;
+
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+        }
+
+
+        .message-notification-dot {
+            width: 8px;
+            height: 8px;
+
+            background: #dc3545;
+
+            border-radius: 50%;
+
+            display: inline-block;
+
+            flex-shrink: 0;
+
+            box-shadow:
+                0 0 0 2px rgba(255,255,255,0.25);
+
+            animation: messageDotPulse 1.8s infinite;
+        }
+
+
+        @keyframes messageDotPulse {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
+        }
+
+
+        /* =====================================================
+           USER AREA
+        ===================================================== */
+
+        .navbar-user {
+            color: white;
+
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+
+            flex-shrink: 0;
+        }
+
+
+        .navbar-user a {
+            color: white;
+            text-decoration: none;
+        }
+
+
+        .navbar-user a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ===================================================== */
+
+        .container {
+            width: 100%;
+
+            max-width: 1100px;
+
+            margin-left: auto;
+            margin-right: auto;
+
+            padding: 30px;
+        }
+
+
+        /* =====================================================
+           DJANGO MESSAGES
+        ===================================================== */
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+
+        .message {
+            padding: 12px 15px;
+
+            border-radius: 7px;
+
+            margin-bottom: 10px;
+
+            background: #e9ecef;
+
+            border: 1px solid #ced4da;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+            display: inline-block;
+
+            padding: 9px 16px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            border: none;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+
+
+        .btn-success {
+            background: #198754;
+            color: white;
+        }
+
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE TABLE
+        ===================================================== */
+
+        .table-responsive {
+            width: 100%;
+
+            overflow-x: auto;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        /* =====================================================
+           TABLET
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .navbar {
+                padding: 13px 18px;
+
+                gap: 12px;
+            }
+
+
+            .navbar-brand {
+                font-size: 21px;
+            }
+
+
+            .navbar-links {
+                gap: 4px 10px;
+            }
+
+
+            .navbar-links a {
+                font-size: 13px;
+            }
+
+
+            .navbar-user {
+                font-size: 13px;
+            }
+
+
+            .container {
+                padding: 25px 20px;
+            }
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 14px 12px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 10px;
+            }
+
+
+            /* Logo */
+
+            .navbar-brand {
+                display: block;
+
+                text-align: center;
+
+                font-size: 22px;
+            }
+
+
+            /* Links */
+
+            .navbar-links {
+                width: 100%;
+
+                display: flex;
+
+                justify-content: center;
+
+                align-items: center;
+
+                gap: 4px 10px;
+
+                flex-wrap: wrap;
+            }
+
+
+            .navbar-links a {
+                font-size: 13px;
+
+                padding: 6px 3px;
+            }
+
+
+            /* Messages on mobile */
+
+            .messages-link {
+                gap: 4px;
+            }
+
+
+            .message-notification-dot {
+                width: 7px;
+                height: 7px;
+            }
+
+
+            /* User */
+
+            .navbar-user {
+                width: 100%;
+
+                justify-content: center;
+
+                font-size: 13px;
+            }
+
+
+            /* Main */
+
+            .container {
+                width: 100%;
+
+                padding: 18px 13px;
+            }
+
+        }
+
+
+        /* =====================================================
+           SMALL PHONE
+        ===================================================== */
+
+        @media (max-width: 480px) {
+
+            .navbar {
+                padding: 12px 8px;
+
+                gap: 8px;
+            }
+
+
+            .navbar-brand {
+                font-size: 21px;
+            }
+
+
+            .navbar-links {
+                gap: 3px 8px;
+            }
+
+
+            .navbar-links a {
+                font-size: 12px;
+
+                padding: 5px 2px;
+            }
+
+
+            .navbar-user {
+                font-size: 12px;
+            }
+
+
+            .container {
+                padding: 14px 9px;
+            }
+
+
+            .btn {
+                max-width: 100%;
+            }
+
+        }
+
+
+        /* =====================================================
+           VERY SMALL PHONE
+        ===================================================== */
+
+        @media (max-width: 360px) {
+
+            .navbar-links {
+                gap: 3px 6px;
+            }
+
+
+            .navbar-links a {
+                font-size: 11px;
+            }
+
+
+            .navbar-user {
+                font-size: 11px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar">
+
+
+    <!-- =====================================================
+         CAMPUSLANCE LOGO
+    ===================================================== -->
+
+    <a
+        href="{% url 'home' %}"
+        class="navbar-brand"
+    >
+
+        CampusLance
+
+    </a>
+
+
+
+    <!-- =====================================================
+         NAVIGATION LINKS
+    ===================================================== -->
+
+    <div class="navbar-links">
+
+
+        <!-- HOME -->
+
+        <a href="{% url 'home' %}">
+            Home
+        </a>
+
+
+
+        <!-- JOBS -->
+
+        <a href="{% url 'job_list' %}">
+            Jobs
+        </a>
+
+
+
+        {% if user.is_authenticated %}
+
+
+            <!-- =================================================
+                 DASHBOARD
+            ================================================= -->
+
+            {% if user.role == "client" %}
+
+                <a href="{% url 'client_dashboard' %}">
+                    Dashboard
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'student_dashboard' %}">
+                    Dashboard
+                </a>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 STUDENT LINKS
+            ================================================= -->
+
+            {% if user.role == "student" %}
+
+
+                <a href="{% url 'my_applications' %}">
+                    My Applications
+                </a>
+
+
+                <!-- AI ASSISTANT -->
+
+                <a
+                    href="{% url 'ai_assistant' %}"
+                    class="ai-link"
+                >
+
+                    🤖 AI Assistant
+
+                </a>
+
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 CLIENT LINKS
+            ================================================= -->
+
+            {% if user.role == "client" %}
+
+                <a href="{% url 'post_job' %}">
+                    Post Job
+                </a>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 MESSAGES
+            ================================================= -->
+
+            <a
+                href="{% url 'message_inbox' %}"
+                class="messages-link"
+            >
+
+                💬 Messages
+
+
+                {% if unread_message_count|default:0 > 0 %}
+
+                    <span
+                        class="message-notification-dot"
+                        title="You have new messages"
+                        aria-label="You have new messages"
+                    ></span>
+
+                {% endif %}
+
+            </a>
+
+
+
+            <!-- =================================================
+                 PROFILE
+            ================================================= -->
+
+            <a href="{% url 'profile' %}">
+                Profile
+            </a>
+
+
+        {% else %}
+
+
+            <!-- =================================================
+                 LOGGED OUT
+            ================================================= -->
+
+            <a href="{% url 'login' %}">
+                Login
+            </a>
+
+
+            <a href="{% url 'register' %}">
+                Register
+            </a>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         USER INFORMATION
+    ===================================================== -->
+
+    {% if user.is_authenticated %}
+
+        <div class="navbar-user">
+
+            <span>
+                Hi, {{ user.username }}
+            </span>
+
+            <span>
+                |
+            </span>
+
+            <a href="{% url 'logout' %}">
+                Logout
+            </a>
+
+        </div>
+
+    {% endif %}
+
+
+</nav>
+
+
+
+<!-- =========================================================
+     DJANGO MESSAGES / ALERTS
+========================================================= -->
+
+{% if messages %}
+
+    <div class="container messages">
+
+        {% for message in messages %}
+
+            <div class="message">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+
+
+<!-- =========================================================
+     PAGE CONTENT
+========================================================= -->
+
+<main>
+
+    <div class="container">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </div>
+
+</main>
+
+
+
+</body>
+
+</html>
