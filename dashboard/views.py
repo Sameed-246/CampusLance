@@ -309,6 +309,7 @@ def ai_assistant(request):
                 # =================================================
 
                 answer = response.choices[0].message.content
+                print("CHATBOT DEBUG: AI answer length:", len(answer or ""), flush=True)
 
                 if not answer:
 
@@ -347,6 +348,8 @@ def ai_assistant(request):
 
                 request.session["ai_chat_history"] = chat_history
                 request.session.modified = True
+
+                print("CHATBOT DEBUG: Messages in history:", len(chat_history), flush=True)
 
                 print(
                     "CHATBOT DEBUG: Conversation saved successfully",
