@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from django.conf import settings
-from openai import OpenAI
+from groq import Groq
 
 from applications.models import Application
 from jobs.models import Job
@@ -170,10 +170,7 @@ def ai_assistant(request):
                 # CREATE GROQ CLIENT
                 # =================================================
 
-                client = OpenAI(
-                    api_key=settings.GROQ_API_KEY,
-                    base_url="https://api.groq.com/openai/v1"
-                )
+                client = Groq(api_key=settings.GROQ_API_KEY)
 
 
                 # =================================================
