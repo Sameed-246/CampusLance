@@ -1,7 +1,8 @@
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-
 from django.conf import settings
+
 from groq import Groq
 
 from applications.models import Application
@@ -81,11 +82,8 @@ def client_dashboard(request):
 
     context = {
         "jobs": jobs,
-
         "applications": applications,
-
         "total_jobs": jobs.count(),
-
         "total_applications": applications.count(),
 
         "pending_applications": applications.filter(
@@ -111,26 +109,13 @@ def client_dashboard(request):
 @login_required
 def ai_assistant(request):
 
-    # ========================================================
-    # GET EXISTING CHAT HISTORY
-    # ========================================================
-
     chat_history = request.session.get(
         "ai_chat_history",
         []
     )
 
-
     # ========================================================
     # CLEAR CHAT
-    #
-    # Supports BOTH:
-    #
-    # /dashboard/ai-assistant/?clear=1
-    #
-    # and POST:
-    #
-    # clear_chat=1
     # ========================================================
 
     if (
@@ -139,11 +124,9 @@ def ai_assistant(request):
     ):
 
         request.session["ai_chat_history"] = []
-
         request.session.modified = True
 
         return redirect("ai_assistant")
-
 
     # ========================================================
     # SEND MESSAGE
@@ -156,22 +139,42 @@ def ai_assistant(request):
             ""
         ).strip()
 
-
         if question:
+
+            print(
+                "CHATBOT DEBUG: Question received",
+                flush=True
+            )
+
+            api_key = getattr(
+                settings,
+                "GROQ_API_KEY",
+                None
+            )
+
+            print(
+                "CHATBOT DEBUG: GROQ_API_KEY configured:",
+                bool(api_key),
+                flush=True
+            )
 
             try:
 
-                if not settings.GROQ_API_KEY:
+                if not api_key:
                     raise RuntimeError(
-                        "GROQ_API_KEY is not configured."
+                        "GROQ_API_KEY is not configured in Render."
                     )
 
                 # =================================================
                 # CREATE GROQ CLIENT
                 # =================================================
 
-                client = Groq(api_key=settings.GROQ_API_KEY)
+                client = Groq(api_key=api_key)
 
+                print(
+                    "CHATBOT DEBUG: Groq client created",
+                    flush=True
+                )
 
                 # =================================================
                 # SYSTEM INSTRUCTION
@@ -234,20 +237,16 @@ def ai_assistant(request):
                     "roadmaps."
                 )
 
-
                 # =================================================
                 # BUILD GROQ MESSAGE HISTORY
                 # =================================================
 
                 messages = [
-
                     {
                         "role": "system",
                         "content": system_instruction
                     }
-
                 ]
-
 
                 # =================================================
                 # ADD PREVIOUS CHAT HISTORY
@@ -257,48 +256,36 @@ def ai_assistant(request):
 
                     role = chat_message.get("role")
 
-                    text = chat_message.get(
-                        "text",
-                        ""
-                    )
+                    text = chat_message.get("text", "")
 
                     if not text:
                         continue
 
-
-                    # Only allow valid Groq roles
-                    if role not in [
-                        "user",
-                        "assistant"
-                    ]:
+                    if role not in ["user", "assistant"]:
                         continue
 
-
                     messages.append({
-
                         "role": role,
-
                         "content": text
-
                     })
-
 
                 # =================================================
                 # ADD CURRENT USER MESSAGE
                 # =================================================
 
                 messages.append({
-
                     "role": "user",
-
                     "content": question
-
                 })
-
 
                 # =================================================
                 # SEND REQUEST TO GROQ
                 # =================================================
+
+                print(
+                    "CHATBOT DEBUG: Sending request to Groq",
+                    flush=True
+                )
 
                 response = client.chat.completions.create(
 
@@ -312,13 +299,16 @@ def ai_assistant(request):
 
                 )
 
+                print(
+                    "CHATBOT DEBUG: Groq response received",
+                    flush=True
+                )
 
                 # =================================================
                 # GET AI RESPONSE
                 # =================================================
 
                 answer = response.choices[0].message.content
-
 
                 if not answer:
 
@@ -327,78 +317,23 @@ def ai_assistant(request):
                         "Please try again."
                     )
 
-
                 # =================================================
                 # SAVE USER MESSAGE
                 # =================================================
 
                 chat_history.append({
-
                     "role": "user",
-
                     "text": question
-
                 })
-
 
                 # =================================================
                 # SAVE AI MESSAGE
                 # =================================================
 
                 chat_history.append({
-
                     "role": "assistant",
-
                     "text": answer
-
                 })
-
-
-                # =================================================
-                # KEEP LAST 20 CHAT MESSAGES
-                # =================================================
-
-                chat_history = chat_history[-20:]
-
-
-                # =================================================
-                # SAVE TO SESSION
-                # =================================================
-
-                request.session["ai_chat_history"] = chat_history
-
-                request.session.modified = True
-
-
-            except Exception as e:
-
-                print("Groq Error:", e)
-
-
-                # =================================================
-                # SAVE ERROR MESSAGE TO CHAT
-                # =================================================
-
-                chat_history.append({
-
-                    "role": "user",
-
-                    "text": question
-
-                })
-
-
-                chat_history.append({
-
-                    "role": "assistant",
-
-                    "text": (
-                        "Sorry, I couldn't connect to the AI "
-                        "service right now. Please try again."
-                    )
-
-                })
-
 
                 # =================================================
                 # KEEP LAST 20 MESSAGES
@@ -406,28 +341,64 @@ def ai_assistant(request):
 
                 chat_history = chat_history[-20:]
 
+                # =================================================
+                # SAVE SESSION
+                # =================================================
+
+                request.session["ai_chat_history"] = chat_history
+                request.session.modified = True
+
+                print(
+                    "CHATBOT DEBUG: Conversation saved successfully",
+                    flush=True
+                )
+
+            except Exception as e:
+
+                print(
+                    "Groq Error:",
+                    repr(e),
+                    flush=True
+                )
+
+                # =================================================
+                # SAVE ERROR MESSAGE TO CHAT
+                # =================================================
+
+                chat_history.append({
+                    "role": "user",
+                    "text": question
+                })
+
+                chat_history.append({
+                    "role": "assistant",
+                    "text": (
+                        "Sorry, I couldn't connect to the AI "
+                        "service right now. Please try again."
+                    )
+                })
+
+                # =================================================
+                # KEEP LAST 20 MESSAGES
+                # =================================================
+
+                chat_history = chat_history[-20:]
 
                 # =================================================
                 # SAVE SESSION
                 # =================================================
 
                 request.session["ai_chat_history"] = chat_history
-
                 request.session.modified = True
-
 
     # ============================================================
     # RENDER AI ASSISTANT
     # ============================================================
 
     return render(
-
         request,
-
         "dashboard/ai_assistant.html",
-
         {
             "chat_history": chat_history,
         }
-
     )
